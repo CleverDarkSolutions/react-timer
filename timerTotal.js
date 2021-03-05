@@ -1,9 +1,8 @@
-import logo from './logo.svg';
+
 import './App.css';
 import Timer from './timer';
 import TimerDisplay from './timerDisplay';
-import Feedback from './feedback';
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -45,6 +44,7 @@ class TimerTotal extends Component {
     }
 
     stopDate = () => {
+        isPaused = false;
         this.setState({
             hours: 0,
             minutes: 0,
@@ -122,7 +122,7 @@ class TimerTotal extends Component {
                 <Button className="but1" variant="danger" onClick={() => { this.stopDate() }}>Stop/Refresh</Button>
                 <Button className="but1" variant="dark" onClick={() => { this.toggleTime() }}>Toggle</Button>
 
-                <Feedback></Feedback>
+                
             </div>
         )
     }
