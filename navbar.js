@@ -23,6 +23,12 @@ let navElement3 = {
     top: '0vh',
     left: '40vw'
 }
+
+let navElement4 = {
+    position: 'absolute',
+    top: '0vh',
+    left: '60vw'
+}
 const Navbar = (props) => {
     return (
         <div>
@@ -35,7 +41,11 @@ const Navbar = (props) => {
                         <a className="nav-link" onClick={props.functionTwo}>Stopwatch</a>
                     </li>
                     <li className="nav-item list-inline-item" style={navElement3} >
-                        <a className="nav-link" onClick={props.functionThree}>Feedback</a>
+                        <a className="nav-link" onClick={props.functionThree}>Calculator</a>
+                    </li>
+
+                    <li className="nav-item list-inline-item" style={navElement4} >
+                        <a className="nav-link" onClick={props.functionFour}>Feedback</a>
                     </li>
                 </ul>
 
