@@ -13,7 +13,7 @@ let digitStyle = {
 
 const Square = (props) => {
     return (
-        <Button onClick={props.effect} className='btn btn-dark' style={buttonStyle}><span style={digitStyle}>{props.children}</span></Button>
+        <Button variant={props.color} onClick={props.effect} style={buttonStyle}><span style={digitStyle}>{props.children}</span></Button>
     )
 }
 

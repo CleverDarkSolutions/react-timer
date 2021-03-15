@@ -16,10 +16,10 @@ class calculatorPad extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            inputValue: '0',
-            currentOperation: '',
-            secondInput: '',
-            whichInput: 'first'
+            inputValue: '0', // first number
+            currentOperation: '', // operation in the middle
+            secondInput: '', // second number
+            whichInput: 'first' // input switching
         }
     }
 
@@ -27,7 +27,7 @@ class calculatorPad extends Component {
         console.log(this.state)
     }
 
-    changeInputs = () => {
+    changeInputs = () => { // input switching
         this.setState({
             whichInput: 'second'
         })
@@ -38,15 +38,15 @@ class calculatorPad extends Component {
         console.log('First: ' + this.state.inputValue)
         console.log('Second: ' + this.state.secondInput)
 
-        if (this.state.whichInput == 'first') {
-            if (this.state.inputValue == '0') {
-                if (n == '.') {
+        if (this.state.whichInput == 'first') { // first number
+            if (this.state.inputValue == '0') { // bug fixes when input equals 0
+                if (n == '.') { //
                     this.setState({
-                        inputValue: this.state.inputValue + n,
+                        inputValue: this.state.inputValue + n, // exception for comma
                         secondInput: ''
                     })
                 }
-                else {
+                else { // preventing situations like 06
                     this.setState({
                         inputValue: n,
                         secondInput: ''
@@ -54,7 +54,7 @@ class calculatorPad extends Component {
                 }
             }
 
-            else {
+            else { // normal input
                 this.setState({
                     inputValue: this.state.inputValue + n,
                     secondInput: ''
@@ -62,9 +62,9 @@ class calculatorPad extends Component {
             }
         }
         else {
-            if (this.state.secondInput == '') {
-                if (n == '.') {
-                    this.setState({
+            if (this.state.secondInput == '') { // second number
+                if (n == '.') { 
+                    this.setState({ // adding zero before comma
                         secondInput: '0' + n
                     })
                 }
@@ -74,12 +74,12 @@ class calculatorPad extends Component {
                     })
                 }
             }
-            else if (this.state.secondInput == '0'){
+            else if (this.state.secondInput == '0') { // preventing situations like 06
                 this.setState({
                     secondInput: n
                 })
             }
-            else {
+            else { // normal input
                 this.setState({
                     secondInput: this.state.secondInput + n
                 })
@@ -87,32 +87,51 @@ class calculatorPad extends Component {
         }
     }
 
-    backSpace = () => {
+    backSpace = () => { // deleting one character
         let str;
-        if (this.state.whichInput == 'first')
+        if (this.state.whichInput == 'first') // first input
             str = this.state.inputValue;
-        else
+        else // second input
             str = this.state.secondInput;
 
-        str = str.substring(0, str.length - 1);
+        if (str.length > 1) {
+            str = str.substring(0, str.length - 1);
+        }
+        else {  // bugfix where substring() would get -1 index
+            str = '';
+        }
         console.log(str);
-        if (this.state.whichInput == 'first') {
-            if (this.state.inputValue.length == 1) {
-                this.setState({
+        if (this.state.whichInput == 'first') { // first input 
+            if (this.state.inputValue.length == 1) { 
+                this.setState({ // preventing deleting all characters
                     inputValue: '0'
                 })
             }
             else {
-                this.setState({
-                    inputValue: str
-                })
+                if (this.state.inputValue == '-') { // case for lone minus
+                    this.setState({
+                        inputValue: '0'
+                    })
+                }
+                else {
+                    this.setState({
+                        inputValue: str
+                    })
+                }
             }
         }
 
         else {
-            if (this.state.secondInput < 10) {
+            if (this.state.secondInput < 10 && this.state.secondInput > 0) { // preventing instantly deleting second value
                 this.setState({
                     secondInput: '0'
+                })
+            }
+
+            else if (this.state.secondInput == '') { // deleting operation sign while second number is empty
+                this.setState({
+                    currentOperation: '',
+                    whichInput: 'first'
                 })
             }
 
@@ -126,7 +145,8 @@ class calculatorPad extends Component {
     }
 
     clear = (input) => {
-        this.setState({
+        input = input.toString();
+        this.setState({ // set to default state
             inputValue: input,
             currentOperation: '',
             secondInput: '',
@@ -153,7 +173,7 @@ class calculatorPad extends Component {
         }
     */
     calculate = () => {
-        let num1 = Number(this.state.inputValue);
+        let num1 = Number(this.state.inputValue); // converting from string to number
         let num2 = Number(this.state.secondInput);
         console.log(num1, num2);
         let sign = this.state.currentOperation;
@@ -173,9 +193,11 @@ class calculatorPad extends Component {
                 break;
             case '-':
                 result = num1 - num2;
-                break
+                break;
+            case '%':
+                result = num1 % num2;
         }
-        result = result.toString();
+        result = result.toString(); // converting to string for easier input manipulation
         this.clear(result);
     }
 
@@ -207,14 +229,21 @@ class calculatorPad extends Component {
         })
     }
 
+    modulo = () => {
+        this.changeInputs();
+        this.setState({
+            currentOperation: '%'
+        })
+    }
+
     addDecimalPoint = () => {
         if (this.state.whichInput == "first") {
-            if (this.state.inputValue.includes('.') == false) {
+            if (this.state.inputValue.includes('.') == false) { // preventing repeating comma in first number
                 this.changeValue('.');
             }
         }
-        else if (this.state.whichInput == "second" && this.state.secondInput != " ") {
-            console.log(this.secondInput);
+        else if (this.state.whichInput == "second" && this.state.secondInput != " ") { // as above 
+            console.log(this.secondInput); // also preventing invalid use of includes() which result in crash 
             if (this.state.secondInput.includes('.') == false) {
                 this.changeValue('.');
             }
@@ -222,8 +251,10 @@ class calculatorPad extends Component {
     }
 
     plusMinus = () => {
+        let n = - this.state.inputValue
+        n = n.toString();
         this.setState({
-            inputValue: - this.state.inputValue
+            inputValue: n
         })
     }
 
@@ -262,43 +293,65 @@ class calculatorPad extends Component {
         }
     }
 
+    fact = (n) => { // base function for calculating factorial
+        n = Number(n);
+        if (Number.isInteger(n) == true && n<=500 && n>=0) { // avoiding too large numbers to prevent crash
+            if (n == 0 || n == 1) { // and ruling out non-integers
+                return 1;
+            }
+            else return this.fact(n - 1) * n;
+        }
+        else return n;
+    }
+
+    factorial = () => { // updating state using fact()
+        if (this.state.secondInput == '' && this.state.currentOperation == '') {
+            let popoga = this.state.inputValue;
+            popoga = this.fact(popoga);
+            popoga = popoga.toString();
+            this.setState({
+                inputValue: popoga
+            })
+        }
+    }
+
     render() {
         return (
-            <div style={divStyle}>
+            <div style={divStyle} onKeyPress={this.handleKeyPressnpm}>
                 <span id="numberInput" style={inputStyle}>
                     {this.state.inputValue}
                     {this.state.currentOperation}
                     {this.state.secondInput}
                 </span><br></br>
-                <Square effect={() => { this.inverseNumber() }}>1/x</Square>
-                <Square effect={() => { this.powerTwo() }}>x^2</Square>
-                <Square effect={() => { this.squareRoot() }}>sqrt</Square>
-                <Square></Square>
-                <Square effect={() => { this.clear(0) }}>C</Square>
+                <Square color="outline-info" effect={() => { this.inverseNumber() }}>1/x</Square>
+                <Square color="outline-info" effect={() => { this.powerTwo() }}>x^2</Square>
+                <Square color="outline-info" effect={() => { this.squareRoot() }}>sqrt</Square>
+                <Square color="outline-info" ></Square>
+                <Square color="danger" effect={() => { this.clear(0) }}>C</Square>
                 <br></br>
-                <Square effect={() => { this.changeValue('7') }}>7</Square>
-                <Square effect={() => { this.changeValue('8') }}>8</Square>
-                <Square effect={() => { this.changeValue('9') }}>9</Square>
-                <Square></Square>
-                <Square effect={() => { this.backSpace() }}>bs</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('7') }}>7</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('8') }}>8</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('9') }}>9</Square>
+                <Square color="outline-info" effect={() => { this.modulo() }}>%</Square>
+                <Square color="outline-info" effect={() => { this.backSpace() }}> bs</Square>
                 <br></br>
-                <Square effect={() => { this.changeValue('4') }}>4</Square>
-                <Square effect={() => { this.changeValue('5') }}>5</Square>
-                <Square effect={() => { this.changeValue('6') }}>6</Square>
-                <Square effect={() => { this.add() }}>+</Square>
-                <Square effect={() => { this.minus() }}>-</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('4') }}>4</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('5') }}>5</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('6') }}>6</Square>
+                <Square color="outline-info" effect={() => { this.add() }}>+</Square>
+                <Square color="outline-info" effect={() => { this.minus() }}>-</Square>
                 <br></br>
-                <Square effect={() => { this.changeValue('1') }}>1</Square>
-                <Square effect={() => { this.changeValue('2') }}>2</Square>
-                <Square effect={() => { this.changeValue('3') }}>3</Square>
-                <Square effect={() => { this.multiply() }}>x</Square>
-                <Square effect={() => { this.divide() }}>/</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('1') }}>1</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('2') }}>2</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('3') }}>3</Square>
+                <Square color="outline-info" effect={() => { this.multiply() }}>*</Square>
+                <Square color="outline-info" effect={() => { this.divide() }}>/</Square>
                 <br></br>
-                <Square effect={() => { this.addDecimalPoint() }}>.</Square>
-                <Square effect={() => { this.changeValue('0') }}>0</Square>
-                <Square effect={() => { this.plusMinus() }}>+/-</Square>
-                <Square></Square>
-                <Square effect={() => { this.calculate() }}>=</Square>
+                <Square color="outline-dark" effect={() => { this.addDecimalPoint() }}>.</Square>
+                <Square color="outline-dark" effect={() => { this.changeValue('0') }}>0</Square>
+                <Square color="outline-dark" effect={() => { this.plusMinus() }}>+/-</Square>
+                <Square color="outline-info" effect={() => { this.factorial() }}>n!</Square>
+                <Square color="success" effect={() => { this.calculate() }}>=</Square>
             </div>
         )
     }

@@ -8,7 +8,7 @@ import Stopwatch from './stopwatch';
 import Calculator from './calculator';
 
 let mainStyle = {
-  backgroundImage: `url(https://coolbackgrounds.io/images/backgrounds/white/white-unsplash-9d0375d2.jpg)`,
+  backgroundImage: `url(https://www.fg-a.com/wallpapers/2018-quatrefoil-background-white.jpg)`,
   height: '100%',
   textAlign: 'center',
   backgroundRepeat: 'no-repeat',

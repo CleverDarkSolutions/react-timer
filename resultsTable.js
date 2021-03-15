@@ -4,7 +4,7 @@ import Result from './result';
 const ResultsTable = (props) => {
     const results = props.results;
     const cnt = props.count;
-    const componentsToRender = results.map((result,count) => (
+    const componentsToRender = results.map((result,count) => ( // rendering all scores
         <Result count={count} time={result}></Result>
     ));
     return(

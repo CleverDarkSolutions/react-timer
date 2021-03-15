@@ -19,21 +19,42 @@ class TimerTotal extends Component {
     }
 
     setSeconds = (event) => {
-        this.setState({
-            date: event.target.value
-        })
+        if (event.target.value > 60) {
+            this.setState({
+                seconds: 60
+            })
+        }
+        else {
+            this.setState({
+                seconds: event.target.value
+            })
+        }
     }
 
     setHours = (event) => {
+        if(event.target.value > 60){
+            this.setState({
+                hours: 60
+            })
+        }
+        else{
         this.setState({
             hours: event.target.value
         })
     }
+    }
 
     setMinutes = (event) => {
-        this.setState({
-            minutes: event.target.value
-        })
+        if (event.target.value > 60) {
+            this.setState({
+                minutes: 60
+            })
+        }
+        else {
+            this.setState({
+                minutes: event.target.value
+            })
+        }
     }
 
     setPause = () => {
